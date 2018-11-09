@@ -72,10 +72,10 @@ function hd_banner_maybe_load_js(){
 	if ( 'always' === $hd_banner_options['when_to_display'] ) { // Always.
 		add_action( 'wp_enqueue_scripts', 'hd_banner_load_script' );
 	}
-	if ( 'loggedout' !== $hd_banner_options['when_to_display'] && ! empty( $current_user_roles ) ) { // Logged in variations.
+	if ( 'loggedin' === $hd_banner_options['when_to_display'] || in_array( $hd_banner_options['when_to_display'], $current_user_roles ) ) { // Logged in variations.
 		add_action( 'wp_enqueue_scripts', 'hd_banner_load_script' );
 	}
-	if ( 'loggedout' === $hd_banner_options['when_to_display'] && empty( $current_user_roles ) ) { // Logged out.
+	if ( 'loggedout' === $hd_banner_options['when_to_display'] && ! $current_user->exists() ) { // Logged out.
 		add_action( 'wp_enqueue_scripts', 'hd_banner_load_script' );
 	}
 
