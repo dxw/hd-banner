@@ -13,14 +13,10 @@
  */
 
 
-
-
 /**
  * Load up.
  */
 require plugin_dir_path( __FILE__ ) . 'hd-banner_options.php';
-
-
 
 
 /*
@@ -39,31 +35,28 @@ $hd_banner_options = get_option( 'hd_banner_options' );
 defined( 'HD_BANNER_OPTIONS' ) or define( 'HD_BANNER_OPTIONS', maybe_serialize( $hd_banner_options ) );
 
 
-
-
 function hd_banner_load_script() {
 	wp_enqueue_script( 'hd-banner', plugins_url( 'hd-banner.js', __FILE__ ), array( 'jquery' ), null, true );
 	wp_localize_script( 'hd-banner', 'hd_banner_vars', maybe_unserialize( HD_BANNER_OPTIONS ) );
 }
 
 
-
-
 function hd_banner_load_script_admin() {
-	wp_enqueue_script( 'hd-banner-admin', plugins_url( 'hd-banner-admin.js', __FILE__ ), array( 'jquery' ), null, true );
+	wp_enqueue_script( 'hd-banner-admin', plugins_url( 'hd-banner-admin.js', __FILE__ ), array( 'jquery' ), null,
+		true );
 	wp_localize_script( 'hd-banner-admin', 'hd_banner_vars', maybe_unserialize( HD_BANNER_OPTIONS ) );
 }
 
 
-
-function hd_banner_maybe_load_js(){
+function hd_banner_maybe_load_js() {
 
 	$hd_banner_options = maybe_unserialize( HD_BANNER_OPTIONS );
-	if ( empty( array_filter( $hd_banner_options ) ) ) {
+
+	if ( empty( $hd_banner_options ) ) {
 		return;
 	}
 	$current_user_roles = array();
-	$current_user = wp_get_current_user();
+	$current_user       = wp_get_current_user();
 	if ( $current_user->exists() ) {
 		$current_user_roles = ( array ) $current_user->roles;
 	}
@@ -72,7 +65,8 @@ function hd_banner_maybe_load_js(){
 	if ( 'always' === $hd_banner_options['when_to_display'] ) { // Always.
 		add_action( 'wp_enqueue_scripts', 'hd_banner_load_script' );
 	}
-	if ( 'loggedin' === $hd_banner_options['when_to_display'] || in_array( $hd_banner_options['when_to_display'], $current_user_roles ) ) { // Logged in variations.
+	if ( 'loggedin' === $hd_banner_options['when_to_display']
+		|| in_array( $hd_banner_options['when_to_display'], $current_user_roles ) ) { // Logged in variations.
 		add_action( 'wp_enqueue_scripts', 'hd_banner_load_script' );
 	}
 	if ( 'loggedout' === $hd_banner_options['when_to_display'] && ! $current_user->exists() ) { // Logged out.
@@ -81,9 +75,11 @@ function hd_banner_maybe_load_js(){
 
 	// Back end.
 	if ( ! empty( $hd_banner_options['show_in_admin'] ) ) {
-		if ( 'loggedin' === $hd_banner_options['when_to_display'] || 'always' === $hd_banner_options['when_to_display'] || in_array( $hd_banner_options['when_to_display'], $current_user_roles ) ) {
+		if ( 'loggedin' === $hd_banner_options['when_to_display'] || 'always' === $hd_banner_options['when_to_display']
+			|| in_array( $hd_banner_options['when_to_display'], $current_user_roles ) ) {
 			add_action( 'admin_enqueue_scripts', 'hd_banner_load_script_admin' );
 		}
 	}
 }
+
 add_action( 'init', 'hd_banner_maybe_load_js' );
