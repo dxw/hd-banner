@@ -18,7 +18,6 @@
  */
 require plugin_dir_path( __FILE__ ) . 'hd-banner_options.php';
 
-
 /*
  * Retrieve this value with:
  * $hd_banner_options = get_option( 'hd_banner_options' ); // Array of All Options
@@ -31,9 +30,28 @@ require plugin_dir_path( __FILE__ ) . 'hd-banner_options.php';
  * $position = $hd_banner_options['position']; // Position
  * $show_in_admin = $hd_banner_options['show_in_admin']; // Show in admin
  */
-$hd_banner_options = get_option( 'hd_banner_options' );
+$hd_banner_options  = get_option( 'hd_banner_options' );
+$hd_banner_defaults = array(
+	'banner_message'       => '<strong>IMPORTANT NOTE: THIS IS THE TEST/STAGING VERSION, NOT THE LIVE WEBSITE</strong>',
+	'when_to_display'      => 'always',
+	'background_colour'    => '#ffff00',
+	'text_colour'          => '#cc0000',
+	'link_colour'          => '#cc0000',
+	'element_to_attach_to' => 'body',
+	'position'             => 'prepend',
+	'show_in_admin'        => 'show_in_admin'
+);
 defined( 'HD_BANNER_OPTIONS' ) or define( 'HD_BANNER_OPTIONS', maybe_serialize( $hd_banner_options ) );
+defined( 'HD_BANNER_DEFAULTS' ) or define( 'HD_BANNER_DEFAULTS', $hd_banner_defaults );
 
+register_activation_hook( __FILE__, 'hd_set_defaults' );
+
+
+function hd_set_defaults() {
+	if ( ! get_option( 'hd_banner_options' ) ) {
+		update_option( 'hd_banner_options', HD_BANNER_DEFAULTS );
+	}
+}
 
 function hd_banner_load_script() {
 	wp_enqueue_script( 'hd-banner', plugins_url( 'hd-banner.js', __FILE__ ), array( 'jquery' ), null, true );

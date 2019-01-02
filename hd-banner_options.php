@@ -28,15 +28,26 @@ class HDBanner {
 	public function hd_banner_create_admin_page() {
 		$this->hd_banner_options = get_option( 'hd_banner_options' ); ?>
 
+        <style type="text/css">
+            #wp-banner_message-editor-container {
+                max-width: 70%
+            }
+
+            .wp-core-ui .button {
+                margin-right: 20px
+            }
+        </style>
         <div class="wrap">
             <h2>HD Banner</h2>
-            <p>Display a banner on the site</p>
+            <p>Display a banner on the site frontend and backend</p>
 
             <form method="post" action="options.php">
 				<?php
 				settings_fields( 'hd_banner_option_group' );
 				do_settings_sections( 'hd-banner-admin' );
-				submit_button();
+				submit_button( 'Save settings', 'primary', 'submit', false );
+				submit_button( 'Reset to defaults settings', 'secondary', 'reset-default', false );
+				submit_button( 'Delete all settings', 'secondary', 'reset-all', false );
 				?>
             </form>
         </div>
@@ -52,7 +63,7 @@ class HDBanner {
 		add_settings_section(
 			'hd_banner_setting_section', // id
 			'Settings', // title
-			array( $this, 'hd_banner_section_info' ), // callback
+			'', // callback
 			'hd-banner-admin' // page
 		);
 
@@ -163,20 +174,35 @@ class HDBanner {
 			$sanitary_values['show_in_admin'] = $input['show_in_admin'];
 		}
 
+		if ( isset( $_POST['reset-default'] ) ) {
+			$message = 'Settings have been reset and default values loaded.';
+			$type    = 'updated';
+
+			add_settings_error(
+				'hd_banner_option_group',
+				esc_attr( 'settings_updated' ),
+				$message,
+				$type
+			);
+
+			return HD_BANNER_DEFAULTS; //Default settings
+
+		}
+
+		if ( isset( $_POST['reset-all'] ) ) {
+			delete_option( 'hd_banner_options' );
+
+			return;
+
+		}
+
 		return $sanitary_values;
 	}
 
-	public function hd_banner_section_info() {
-
-	}
-
 	public function banner_message_callback() {
-		$editor_style = '<style type="text/css">
-           #wp-banner_message-editor-container{max-width:70%}
-           </style>';
-		$content      = isset( $this->hd_banner_options['banner_message'] ) ? $this->hd_banner_options['banner_message'] : '';
-		$editor_id    = 'banner_message';
-		$args         = array(
+		$content   = isset( $this->hd_banner_options['banner_message'] ) ? $this->hd_banner_options['banner_message'] : '';
+		$editor_id = 'banner_message';
+		$args      = array(
 			'tinymce'       => array(
 				'toolbar1' => 'fontsizeselect,bold,italic,underline,alignleft,aligncenter,alignright,link,unlink,removeformat,undo,redo',
 				'toolbar2' => '',
@@ -185,7 +211,6 @@ class HDBanner {
 			'textarea_name' => 'hd_banner_options[banner_message]',
 			'quicktags'     => false,
 			'textarea_rows' => 10,
-			'editor_css'    => $editor_style,
 		);
 		wp_editor( $content, $editor_id, $args );
 
@@ -212,21 +237,21 @@ class HDBanner {
 
 	public function background_colour_callback() {
 		printf(
-			'<input data-default-color="#ffffff" class="color-picker" type="text" name="hd_banner_options[background_colour]" id="background_colour" value="%s">',
+			'<input data-default-color="#ffff00" class="color-picker" type="text" name="hd_banner_options[background_colour]" id="background_colour" value="%s">',
 			isset( $this->hd_banner_options['background_colour'] ) ? esc_attr( $this->hd_banner_options['background_colour'] ) : ''
 		);
 	}
 
 	public function text_colour_callback() {
 		printf(
-			'<input data-default-color="#000000" class="color-picker" type="text" name="hd_banner_options[text_colour]" id="text_colour" value="%s">',
+			'<input data-default-color="#cc0000" class="color-picker" type="text" name="hd_banner_options[text_colour]" id="text_colour" value="%s">',
 			isset( $this->hd_banner_options['text_colour'] ) ? esc_attr( $this->hd_banner_options['text_colour'] ) : ''
 		);
 	}
 
 	public function link_colour_callback() {
 		printf(
-			'<input data-default-color="#0000ff" class="color-picker" type="text" name="hd_banner_options[link_colour]" id="link_colour" value="%s">',
+			'<input data-default-color="#cc0000" class="color-picker" type="text" name="hd_banner_options[link_colour]" id="link_colour" value="%s">',
 			isset( $this->hd_banner_options['link_colour'] ) ? esc_attr( $this->hd_banner_options['link_colour'] ) : ''
 		);
 	}
