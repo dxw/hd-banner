@@ -6,6 +6,10 @@ jQuery(document).ready(function ($) {
 
     // Build styles.
     var style = '<style>';
+    style += '.hd_banner_container {';
+    style += 'padding: 0px; width: 100%; position: relative; z-index: 10000; border: none; display: block;';
+    style += 'min-height: 30px';
+    style += '}';
     style += '.hd_banner_wrap {';
     style += 'padding: 0px; width: 100%; position: relative; z-index: 1000; border: none; display: block;';
     if (hd_banner_vars.background_colour) {
@@ -27,7 +31,7 @@ jQuery(document).ready(function ($) {
     style += '</style>';
 
     // Build html.
-    var banner = '<div class="hd_banner_wrap"><div class="hd_banner">' + hd_banner_vars.banner_message + '</div></div>';
+    var banner = '<div class="hd_banner_container"><div class="hd_banner_wrap"><div class="hd_banner">' + hd_banner_vars.banner_message + '</div></div></div>';
 
     // Output.
     $('body').prepend(style + banner);
