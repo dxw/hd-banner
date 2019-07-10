@@ -11,7 +11,11 @@ jQuery(document).ready(function ($) {
     style += 'min-height: 30px';
     style += '}';
     style += '.hd_banner_wrap {';
-    style += 'padding: 0px; width: 100%; position: fixed; z-index: 10000; border: none; display: block;';
+    style += 'padding: 0px; width: 100%;';
+    if ( 'yes' === hd_banner_vars.fixed) {
+    	style += 'position: fixed;';
+    }
+    style += 'z-index: 10000; border: none; display: block;';
     if (hd_banner_vars.background_colour) {
         style += 'background-color: ' + hd_banner_vars.background_colour + ';';
     }

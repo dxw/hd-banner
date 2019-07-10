@@ -7,7 +7,7 @@
  * Author URI:      https://www.helpfuldigital.com
  * Text Domain:     hd-banner
  * Domain Path:     /languages
- * Version:         0.2
+ * Version:         0.3
  *
  * @package         Hd_Banner
  */
@@ -24,7 +24,8 @@ $hd_banner_defaults = array(
 	'link_colour'          => '#cc0000',
 	'element_to_attach_to' => 'body',
 	'position'             => 'prepend',
-	'show_in_admin'        => 'show_in_admin'
+	'fixed'                => 'no',
+	'show_in_admin'        => 'show_in_admin',
 );
 
 

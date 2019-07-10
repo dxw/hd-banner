@@ -56,16 +56,16 @@ if ( ! class_exists( 'HD_Banner_Options' ) ) :
 		public function hd_banner_create_admin_page() {
 			$this->hd_banner_options = get_option( 'hd_banner_options' ); ?>
 
-            <style type="text/css">
-                #wp-banner_message-editor-container{max-width:70%}
+			<style type="text/css">
+				#wp-banner_message-editor-container{max-width:70%}
 
-                .wp-core-ui .button{margin-right:20px}
-            </style>
-            <div class="wrap">
-                <h2>HD Banner</h2>
-                <p>Display a customisable banner on the front/back-end of the site.</p>
+				.wp-core-ui .button{margin-right:20px}
+			</style>
+			<div class="wrap">
+				<h2>HD Banner</h2>
+				<p>Display a customisable banner on the front/back-end of the site.</p>
 
-                <form method="post" action="options.php">
+				<form method="post" action="options.php">
 					<?php
 					settings_fields( 'hd_banner_option_group' );
 					do_settings_sections( 'hd-banner-admin' );
@@ -73,8 +73,8 @@ if ( ! class_exists( 'HD_Banner_Options' ) ) :
 					submit_button( 'Reset to defaults settings', 'secondary', 'reset-default', false );
 					submit_button( 'Delete all settings', 'secondary', 'reset-all', false );
 					?>
-                </form>
-            </div>
+				</form>
+			</div>
 		<?php }
 
 		/**
@@ -158,6 +158,15 @@ if ( ! class_exists( 'HD_Banner_Options' ) ) :
 			);
 
 			add_settings_field(
+				'fixed', // id
+				'Fixed position (always visible - front-end only)', // title
+				[ $this, 'fixed_callback' ], // callback
+				'hd-banner-admin', // page
+				'hd_banner_setting_section', // section
+				[ 'label_for' => 'fixed' ] // output proper label element
+			);
+
+			add_settings_field(
 				'show_in_admin', // id
 				'Show in admin', // title
 				[ $this, 'show_in_admin_callback' ], // callback
@@ -185,7 +194,7 @@ if ( ! class_exists( 'HD_Banner_Options' ) ) :
 				$message = 'Settings have been reset to default values.';
 				add_settings_error( $setting, $code, $message, $type );
 
-				return maybe_unserialize( HD_BANNER_DEFAULTS ); //Default settings
+				return maybe_unserialize( HD_BANNER_DEFAULTS ); // Default settings.
 
 			}
 
@@ -234,6 +243,10 @@ if ( ! class_exists( 'HD_Banner_Options' ) ) :
 				$sanitary_values['position'] = $input['position'];
 			}
 
+			if ( isset( $input['fixed'] ) ) {
+				$sanitary_values['fixed'] = $input['fixed'];
+			}
+
 			if ( isset( $input['show_in_admin'] ) ) {
 				$sanitary_values['show_in_admin'] = $input['show_in_admin'];
 			}
@@ -273,13 +286,13 @@ if ( ! class_exists( 'HD_Banner_Options' ) ) :
 			$roles                   = wp_roles()->get_names();
 			$when_to_display_options = array_merge( $when_to_display_options, $roles );
 			?>
-            <select name="hd_banner_options[when_to_display]" id="when_to_display">
-				<?php foreach ( $when_to_display_options as $value => $label ) :
+			<select name="hd_banner_options[when_to_display]" id="when_to_display">
+				<?php foreach( $when_to_display_options as $value => $label ) :
 					$selected = ( isset( $this->hd_banner_options['when_to_display'] ) && $this->hd_banner_options['when_to_display'] === $value ) ? 'selected' : '';
 					?>
-                    <option value="<?php echo esc_attr( $value ); ?>" <?php echo $selected; ?>><?php echo esc_html( $label ); ?></option>
+					<option value="<?php echo esc_attr( $value ); ?>" <?php echo $selected; ?>><?php echo esc_html( $label ); ?></option>
 				<?php endforeach; ?>
-            </select>
+			</select>
 			<?php
 		}
 
@@ -329,10 +342,22 @@ if ( ! class_exists( 'HD_Banner_Options' ) ) :
 		public function position_callback() {
 			?> <select name="hd_banner_options[position]" id="position">
 				<?php $selected = ( isset( $this->hd_banner_options['position'] ) && $this->hd_banner_options['position'] === 'prepend' ) ? 'selected' : ''; ?>
-                <option value="prepend" <?php echo $selected; ?>>Prepend</option>
+				<option value="prepend" <?php echo $selected; ?>>Prepend</option>
 				<?php $selected = ( isset( $this->hd_banner_options['position'] ) && $this->hd_banner_options['position'] === 'append' ) ? 'selected' : ''; ?>
-                <option value="append" <?php echo $selected; ?>>Append</option>
-            </select> <?php
+				<option value="append" <?php echo $selected; ?>>Append</option>
+				</select> <?php
+		}
+
+		/**
+		 * Fixed setup.
+		 */
+		public function fixed_callback() {
+			?> <select name="hd_banner_options[fixed]" id="fixed">
+				<?php $selected = ( isset( $this->hd_banner_options['fixed'] ) && $this->hd_banner_options['fixed'] === 'no' ) ? 'selected' : ''; ?>
+				<option value="no" <?php echo $selected; ?>>No</option>
+				<?php $selected = ( isset( $this->hd_banner_options['fixed'] ) && $this->hd_banner_options['fixed'] === 'yes' ) ? 'selected' : ''; ?>
+				<option value="yes" <?php echo $selected; ?>>Yes</option>
+				</select> <?php
 		}
 
 		/**
@@ -350,9 +375,13 @@ if ( ! class_exists( 'HD_Banner_Options' ) ) :
 		 */
 		public function hd_banner_color_picker() {
 			wp_enqueue_style( 'wp-color-picker' );
-			wp_enqueue_script( 'hd-banner-color-picker', plugins_url( 'hd-color-picker.js', __FILE__ ),
+			wp_enqueue_script(
+				'hd-banner-color-picker',
+				plugins_url( 'hd-color-picker.js', __FILE__ ),
 				[ 'wp-color-picker' ],
-				false, true );
+				false,
+				true
+			);
 		}
 
 	}
