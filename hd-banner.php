@@ -1,10 +1,8 @@
 <?php
 /**
  * Plugin Name:     HD Banner
- * Plugin URI:      https://www.helpfuldigital.com
+ * Plugin URI:      https://www.dxw.com
  * Description:     Display a customisable banner on the front/back-end of the site.
- * Author:          Phil Banks | Helpful Digital
- * Author URI:      https://www.helpfuldigital.com
  * Text Domain:     hd-banner
  * Domain Path:     /languages
  * Version:         0.3
@@ -16,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Invalid request.' );
 }
 
-$hd_banner_defaults = array(
+$hd_banner_defaults = [
 	'banner_message'       => '<strong>IMPORTANT NOTE: THIS IS THE TEST/STAGING VERSION, NOT THE LIVE WEBSITE</strong>',
 	'when_to_display'      => 'always',
 	'background_colour'    => '#ffff00',
@@ -26,19 +24,22 @@ $hd_banner_defaults = array(
 	'position'             => 'prepend',
 	'fixed'                => 'no',
 	'show_in_admin'        => 'show_in_admin',
-);
+];
 
 
 /** Defines the default settings for the plugin */
 defined( 'HD_BANNER_DEFAULTS' ) or define( 'HD_BANNER_DEFAULTS', maybe_serialize( $hd_banner_defaults ) );
+
 /** Register the activation functionality to set the default settings */
 register_activation_hook( __FILE__, 'hd_banner_plugin_activation' );
+
 /** Init HD_Banner class when plugins are loaded */
-add_action( 'plugins_loaded', array( 'HD_Banner', 'init' ) );
+add_action( 'plugins_loaded', [ 'HD_Banner', 'init' ] );
+
 /** Init HD_Banner_Options class when plugins are loaded and in the admin */
 if ( is_admin() ) {
 	require_once plugin_dir_path( __FILE__ ) . 'hd-banner_options.php';
-	add_action( 'plugins_loaded', array( 'HD_Banner_Options', 'init' ) );
+	add_action( 'plugins_loaded', [ 'HD_Banner_Options', 'init' ] );
 }
 
 /**
@@ -63,10 +64,8 @@ if ( ! class_exists( 'HD_Banner' ) ) :
 		/**
 		 * Init the object.
 		 */
-		public static function init() {
-			/** @var stdClass $class */
-			$class = __CLASS__;
-			new $class;
+		public static function init(): HD_Banner {
+			return new HD_Banner();
 		}
 
 		/**
@@ -116,7 +115,7 @@ if ( ! class_exists( 'HD_Banner' ) ) :
 		 * Loads the script for the frontend.
 		 */
 		public static function hd_banner_load_script() {
-			wp_enqueue_script( 'hd-banner', plugins_url( 'hd-banner.js', __FILE__ ), array( 'jquery' ), null, true );
+			wp_enqueue_script( 'hd-banner', plugins_url( 'hd-banner.js', __FILE__ ), [ 'jquery' ], null, true );
 			wp_localize_script( 'hd-banner', 'hd_banner_vars', get_option( 'hd_banner_options' ) );
 		}
 
@@ -125,7 +124,7 @@ if ( ! class_exists( 'HD_Banner' ) ) :
 		 * Loads the scripts for the backend.
 		 */
 		public static function hd_banner_load_script_admin() {
-			wp_enqueue_script( 'hd-banner-admin', plugins_url( 'hd-banner-admin.js', __FILE__ ), array( 'jquery' ),
+			wp_enqueue_script( 'hd-banner-admin', plugins_url( 'hd-banner-admin.js', __FILE__ ), [ 'jquery' ],
 				null,
 				true );
 			wp_localize_script( 'hd-banner-admin', 'hd_banner_vars', get_option( 'hd_banner_options' ) );
@@ -142,7 +141,7 @@ if ( ! class_exists( 'HD_Banner' ) ) :
 				return;
 			}
 
-			$current_user_roles = array();
+			$current_user_roles = [];
 			$current_user       = wp_get_current_user();
 			if ( $current_user->exists() ) {
 				$current_user_roles = ( array ) $current_user->roles;
@@ -150,21 +149,21 @@ if ( ! class_exists( 'HD_Banner' ) ) :
 
 			// Front end.
 			if ( 'always' === $hd_banner_options['when_to_display'] ) { // Always.
-				add_action( 'wp_enqueue_scripts', array( __CLASS__, 'hd_banner_load_script' ) );
+				add_action( 'wp_enqueue_scripts', [ __CLASS__, 'hd_banner_load_script' ] );
 			}
 			if ( 'loggedin' === $hd_banner_options['when_to_display']
-				|| in_array( $hd_banner_options['when_to_display'], $current_user_roles ) ) { // Logged in variations.
-				add_action( 'wp_enqueue_scripts', array( __CLASS__, 'hd_banner_load_script' ) );
+			     || in_array( $hd_banner_options['when_to_display'], $current_user_roles ) ) { // Logged in variations.
+				add_action( 'wp_enqueue_scripts', [ __CLASS__, 'hd_banner_load_script' ] );
 			}
 			if ( 'loggedout' === $hd_banner_options['when_to_display'] && ! $current_user->exists() ) { // Logged out.
-				add_action( 'wp_enqueue_scripts', array( __CLASS__, 'hd_banner_load_script' ) );
+				add_action( 'wp_enqueue_scripts', [ __CLASS__, 'hd_banner_load_script' ] );
 			}
 
 			// Back end.
 			if ( ! empty( $hd_banner_options['show_in_admin'] ) ) {
 				if ( 'loggedin' === $hd_banner_options['when_to_display'] || 'always' === $hd_banner_options['when_to_display']
-					|| in_array( $hd_banner_options['when_to_display'], $current_user_roles ) ) {
-					add_action( 'admin_enqueue_scripts', array( __CLASS__, 'hd_banner_load_script_admin' ) );
+				     || in_array( $hd_banner_options['when_to_display'], $current_user_roles ) ) {
+					add_action( 'admin_enqueue_scripts', [ __CLASS__, 'hd_banner_load_script_admin' ] );
 				}
 			}
 

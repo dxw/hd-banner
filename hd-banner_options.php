@@ -22,10 +22,8 @@ if ( ! class_exists( 'HD_Banner_Options' ) ) :
 		/**
 		 * Init the object.
 		 */
-		public static function init() {
-			/** @var stdClass $class */
-			$class = __CLASS__;
-			new $class;
+		public static function init(): HD_Banner_Options {
+			return new HD_Banner_Options();
 		}
 
 		/**

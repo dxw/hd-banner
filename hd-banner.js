@@ -12,8 +12,8 @@ jQuery(document).ready(function ($) {
     style += '}';
     style += '.hd_banner_wrap {';
     style += 'padding: 0px; width: 100%;';
-    if ( 'yes' === hd_banner_vars.fixed) {
-    	style += 'position: fixed;';
+    if ('yes' === hd_banner_vars.fixed) {
+        style += 'position: fixed;';
     }
     style += 'z-index: 10000; border: none; display: block;';
     if (hd_banner_vars.background_colour) {
