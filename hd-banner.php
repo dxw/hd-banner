@@ -5,7 +5,7 @@
  * Description:     Display a customisable banner on the front/back-end of the site.
  * Text Domain:     hd-banner
  * Domain Path:     /languages
- * Version:         0.3
+ * Version:         0.3.1
  *
  * @package         Hd_Banner
  */
