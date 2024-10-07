@@ -214,7 +214,7 @@ if ( ! class_exists( 'HD_Banner_Options' ) ) :
 
 			$sanitary_values = [];
 			if ( isset( $input['banner_message'] ) ) {
-				$sanitary_values['banner_message'] = wp_kses_post( $input['banner_message'] );
+				$sanitary_values['banner_message'] = wp_kses_post( html_entity_decode( $input['banner_message'] ) );
 			}
 
 			if ( isset( $input['when_to_display'] ) ) {
